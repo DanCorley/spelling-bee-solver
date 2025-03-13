@@ -38,10 +38,6 @@ wheels/
 .DS_Store
 Thumbs.db
 
-# Project specific
-data/*.jsonl
-!data/.gitkeep
-
 # Logs
 logs/
 *.log
