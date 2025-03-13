@@ -1,0 +1,36 @@
+services:
+  spelling-bee:
+    build:
+      context: .
+    container_name: spelling-bee-app
+    ports:
+      - 8080:8080
+    environment:
+      - FLASK_APP=src/web/app.py
+      - FLASK_ENV=production
+      # Add any additional environment variables here
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      # Mount the word comparison file as a volume for easier updates
+      - ./data/word_comparison.jsonl:/app/data/word_comparison.jsonl:ro
+      # Mount logs directory for persistence
+      - ./logs:/app/logs

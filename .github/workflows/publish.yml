@@ -1,0 +1,59 @@
+name: Publish Docker image
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  validate-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check tag format
+        run: |
+          if [[ ! ${{ github.event.release.tag_name }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Release tag must be in the format v{major}.{minor}.{patch} (e.g., v1.0.0)"
+            exit 1
+          fi
+
+  build-and-push:
+    needs: validate-tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ github.event.release.tag_name }}
+            type=semver,pattern=v{{version}},value=${{ github.event.release.tag_name }}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ github.event.release.tag_name }}
+            type=semver,pattern=v{{major}},value=${{ github.event.release.tag_name }}
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
