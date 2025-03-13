@@ -11,7 +11,7 @@ import os
 import uuid
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_cors import CORS
 from src.core.solver import solve_spelling_bee
 
@@ -49,6 +49,14 @@ def add_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'sb-favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def index():

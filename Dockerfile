@@ -10,8 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy other necessary files
 COPY src/core/solver.py ./src/core/
-COPY src/web/app.py ./src/web/
-COPY src/web/templates ./src/web/templates
+COPY src/web/ ./src/web/
 COPY data/word_comparison.jsonl ./data/
 
 # Create logs directory
