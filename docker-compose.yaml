@@ -30,7 +30,8 @@ services:
         max-size: "10m"
         max-file: "3"
     volumes:
-      # Mount the word comparison file as a volume for easier updates
-      - ./data/word_comparison.jsonl:/app/data/word_comparison.jsonl:ro
+      # Mount files as a volume for easier development
+      - ./data/:/app/data/:ro
+      - ./src/:/app/src/
       # Mount logs directory for persistence
-      - ./logs:/app/logs
+      # - ./logs:/app/logs
