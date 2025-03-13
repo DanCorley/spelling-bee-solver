@@ -101,13 +101,28 @@
         .toggle-switch {
             margin-right: 10px;
         }
+        .share-url {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        .share-url input {
+            width: calc(100% - 100px);
+            margin-right: 10px;
+        }
+        .share-url button {
+            width: auto;
+            padding: 10px 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Spelling Bee Solver</h1>
         
-        <form method="POST">
+        <form method="POST" id="spellingBeeForm" onsubmit="updateURL(event)">
             <div class="form-group">
                 <label for="mandatory">Mandatory Letter:</label>
                 <input type="text" id="mandatory" name="mandatory" maxlength="1" value="{{ mandatory }}" required>
@@ -120,7 +135,7 @@
             
             <div class="toggle-container">
                 <label class="toggle-label">
-                    <input type="checkbox" name="all_words" class="toggle-switch" {{ 'checked' if all_words else '' }}>
+                    <input type="checkbox" name="all_words" id="all_words" class="toggle-switch" {{ 'checked' if all_words else '' }}>
                     Show all possible words (including those never seen in Spelling Bee)
                 </label>
             </div>
@@ -165,5 +180,39 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+        function updateURL(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('spellingBeeForm');
+            const mandatory = form.mandatory.value.trim().toLowerCase();
+            const allowed = form.allowed.value.trim().toLowerCase();
+            const allWords = form.all_words.checked;
+            
+            // Build the URL
+            const params = new URLSearchParams();
+            if (mandatory) params.set('mandatory', mandatory);
+            if (allowed) params.set('allowed', allowed);
+            if (allWords) params.set('all-words', 'true');
+            
+            // Update the URL without reloading the page
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, '', newUrl);
+            
+            // Submit the form
+            form.submit();
+        }
+
+        // Set the share URL input value when the page loads
+        window.onload = function() {
+            const shareUrlDiv = document.getElementById('shareUrl');
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            if (shareUrlDiv && shareUrlInput) {
+                shareUrlDiv.style.display = 'block';
+                shareUrlInput.value = window.location.href;
+            }
+        }
+    </script>
 </body>
 </html> 
