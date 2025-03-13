@@ -101,6 +101,20 @@
         .toggle-switch {
             margin-right: 10px;
         }
+        
+        .status-message {
+            font-size: 0.9em;
+            margin-top: 5px;
+            color: #666;
+        }
+        
+        .loading {
+            color: #1a73e8;
+        }
+        
+        .success {
+            color: #34a853;
+        }
     </style>
 </head>
 <body>
@@ -110,7 +124,8 @@
         <form method="POST">
             <div class="form-group">
                 <label for="mandatory">Mandatory Letter:</label>
-                <input type="text" id="mandatory" name="mandatory" maxlength="1" value="{{ mandatory }}" required>
+                <input type="text" id="mandatory" name="mandatory" maxlength="1" value="{{ mandatory }}" required onblur="prefilterWords(event)">
+                <div id="prefilterStatus" class="status-message"></div>
             </div>
             
             <div class="form-group">
@@ -165,5 +180,84 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+        async function prefilterWords(event) {
+            const mandatory = event.target.value.trim().toLowerCase();
+            const statusDiv = document.getElementById('prefilterStatus');
+            
+            if (!mandatory) {
+                statusDiv.textContent = '';
+                return;
+            }
+            
+            if (mandatory.length !== 1 || !/^[a-z]$/.test(mandatory)) {
+                statusDiv.textContent = 'Please enter a single letter';
+                statusDiv.className = 'status-message error';
+                return;
+            }
+            
+            try {
+                // statusDiv.textContent = 'Pre-filtering words...';
+                // statusDiv.className = 'status-message loading';
+                
+                const response = await fetch('/prefilter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mandatory }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (!data.is_production) {
+                        const timeStr = data.processing_time.toFixed(3);
+                        const cacheStatus = data.cache_hit ? 'cache hit' : 'cache miss';
+                        statusDiv.textContent = `Found ${data.count} possible words (${timeStr}s, ${cacheStatus})`;
+                    }
+                    statusDiv.className = 'status-message success';
+                } else {
+                    throw new Error(data.error || 'Failed to pre-filter words');
+                }
+            } catch (error) {
+                statusDiv.textContent = error.message;
+                statusDiv.className = 'status-message error';
+            }
+        }
+        
+        function updateURL(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('spellingBeeForm');
+            const mandatory = form.mandatory.value.trim().toLowerCase();
+            const allowed = form.allowed.value.trim().toLowerCase();
+            const allWords = form.all_words.checked;
+            
+            // Build the URL
+            const params = new URLSearchParams();
+            if (mandatory) params.set('mandatory', mandatory);
+            if (allowed) params.set('allowed', allowed);
+            if (allWords) params.set('all-words', 'true');
+            
+            // Update the URL without reloading the page
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, '', newUrl);
+            
+            // Submit the form
+            form.submit();
+        }
+
+        // Set the share URL input value when the page loads
+        window.onload = function() {
+            const shareUrlDiv = document.getElementById('shareUrl');
+            const shareUrlInput = document.getElementById('shareUrlInput');
+            if (shareUrlDiv && shareUrlInput) {
+                shareUrlDiv.style.display = 'block';
+                shareUrlInput.value = window.location.href;
+            }
+        }
+    </script>
 </body>
 </html> 
