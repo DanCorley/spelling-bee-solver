@@ -226,38 +226,7 @@
                 statusDiv.className = 'status-message error';
             }
         }
-        
-        function updateURL(event) {
-            event.preventDefault();
-            
-            const form = document.getElementById('spellingBeeForm');
-            const mandatory = form.mandatory.value.trim().toLowerCase();
-            const allowed = form.allowed.value.trim().toLowerCase();
-            const allWords = form.all_words.checked;
-            
-            // Build the URL
-            const params = new URLSearchParams();
-            if (mandatory) params.set('mandatory', mandatory);
-            if (allowed) params.set('allowed', allowed);
-            if (allWords) params.set('all-words', 'true');
-            
-            // Update the URL without reloading the page
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, '', newUrl);
-            
-            // Submit the form
-            form.submit();
-        }
 
-        // Set the share URL input value when the page loads
-        window.onload = function() {
-            const shareUrlDiv = document.getElementById('shareUrl');
-            const shareUrlInput = document.getElementById('shareUrlInput');
-            if (shareUrlDiv && shareUrlInput) {
-                shareUrlDiv.style.display = 'block';
-                shareUrlInput.value = window.location.href;
-            }
-        }
     </script>
 </body>
 </html> 
