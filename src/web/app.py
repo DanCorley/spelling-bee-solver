@@ -21,7 +21,7 @@ os.makedirs(log_dir, exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - [%(request_id)s] - %(message)s',
     handlers=[
         logging.FileHandler(os.path.join(log_dir, 'spelling_bee.log')),
