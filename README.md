@@ -49,6 +49,6 @@ docker-compose up --build
 ## CLI tool
 
 ```bash
-python src/
+python src/core/solver.py -m <mandatory_letter> -a <allowed_letters>
 ```
 

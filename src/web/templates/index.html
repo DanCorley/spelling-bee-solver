@@ -150,8 +150,11 @@
         {% if valid_words %}
         <div class="results">
             <div class="stats">
-                <p>Found {{ valid_words|length }} valid words</p>
-                <p>Found {{ pangrams|length }} pangrams (words using all 7 letters)</p>
+                <p>Found <b>{{ valid_words|length }}</b> valid words and <b>{{ pangrams|length }}</b> pangrams (words using all 7 letters)</p>
+                {% set pangram_points = pangrams|sum(attribute='points') %}
+                {% set valid_word_points = (valid_words|sum(attribute='points')) - pangram_points %}
+                <!-- all_words contains all possible words, so we need to subtract the pangram points from the total -->
+                <p>Found potential <b>{{ pangram_points + valid_word_points }}</b> points - <b>{{ pangram_points }}</b> from pangrams and <b>{{ valid_word_points }}</b> from other words</p>
             </div>
             
             {% if pangrams %}
@@ -160,7 +163,7 @@
                 {% for word in pangrams %}
                 <li class="word-item pangram">
                     {% if word.in_bee %}✓{% else %}×{% endif %}
-                    {{ word.word }} ({{ word.bee_count }} times)
+                    {{ word.word }} ({{ word.bee_count }} times) - {{ word.points }} points
                 </li>
                 {% endfor %}
             </ul>
@@ -173,7 +176,7 @@
                     <span class="{% if word.in_bee %}checkmark{% else %}cross{% endif %}">
                         {% if word.in_bee %}✓{% else %}×{% endif %}
                     </span>
-                    {{ word.word }} ({{ word.bee_count }} times)
+                    {{ word.word }} ({{ word.bee_count }} times) - {{ word.points }} points
                 </li>
                 {% endfor %}
             </ul>
