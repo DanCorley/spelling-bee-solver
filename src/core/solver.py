@@ -53,27 +53,38 @@ def is_valid_spelling_bee_word(word: str, mandatory: str, allowed: str, min_leng
 def solve_spelling_bee(mandatory: str, allowed: str, min_length: int = 4) -> Tuple[List[dict], List[dict]]:
     """Find all valid Spelling Bee words"""
     words_data = load_word_list()
+    all_letters = set(mandatory + allowed)
     
     valid_words = []
     for word, data in words_data.items():
         if is_valid_spelling_bee_word(word, mandatory, allowed, min_length):
+
+            is_pangram = all(letter in word for letter in all_letters)
+
+            score = 0
+            if len(word) == 4:
+                score = 1
+            elif len(word) > 4:
+                score = len(word)
+                if is_pangram:
+                    score += 7
+            
+
             valid_words.append({
                 'word': word,
                 'length': len(word),
+                'points': score,
                 'bee_count': data['bee_count'],
                 'in_bee': data['in_bee'],
-                'in_english_words': data['in_english_words']
+                'in_english_words': data['in_english_words'],
+                'is_pangram': is_pangram
             })
     
     # Sort alphabetically
     valid_words.sort(key=lambda x: x['word'])
     
     # Find pangrams (words that use all 7 letters)
-    all_letters = set(mandatory + allowed)
-    pangrams = [
-        word_data for word_data in valid_words 
-        if all(letter in word_data['word'] for letter in all_letters)
-    ]
+    pangrams = [word_data for word_data in valid_words if word_data['is_pangram']]
     
     return valid_words, pangrams
 
@@ -112,12 +123,12 @@ def main():
             print("\nPangrams:")
             for word_data in pangrams:
                 status = "✓" if word_data['in_bee'] else "×"
-                print(f"{status} {word_data['word']} ({word_data['bee_count']} times)")
+                print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
         
         print("\nAll valid words (sorted alphabetically):")
         for word_data in valid_words:
             status = "✓" if word_data['in_bee'] else "×"
-            print(f"{status} {word_data['word']} ({word_data['bee_count']} times)")
+            print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
             
     except FileNotFoundError as e:
         print(f"Error: {e}")
