@@ -76,6 +76,7 @@ def solve_spelling_bee(mandatory: str, allowed: str, min_length: int = 4) -> Tup
                 'points': score,
                 'bee_count': data['bee_count'],
                 'in_bee': data['in_bee'],
+                'status': "✓" if data['in_bee'] else "×",
                 'in_english_words': data['in_english_words'],
                 'is_pangram': is_pangram
             })
@@ -119,16 +120,16 @@ def main():
         print(f"\nFound {len(valid_words)} valid words")
         print(f"Found {len(pangrams)} pangrams (words using all 7 letters)")
         
+        template = "{status} {word} ({bee_count} times) - {points} points"
+
         if pangrams:
             print("\nPangrams:")
             for word_data in pangrams:
-                status = "✓" if word_data['in_bee'] else "×"
-                print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
+                print(template.format(**word_data))
         
         print("\nAll valid words (sorted alphabetically):")
         for word_data in valid_words:
-            status = "✓" if word_data['in_bee'] else "×"
-            print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
+            print(template.format(**word_data))
             
     except FileNotFoundError as e:
         print(f"Error: {e}")
