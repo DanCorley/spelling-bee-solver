@@ -119,14 +119,15 @@ def main():
         print(f"\nFound {len(valid_words)} valid words")
         print(f"Found {len(pangrams)} pangrams (words using all 7 letters)")
         
-        status = "✓" if word_data['in_bee'] else "×"
         if pangrams:
             print("\nPangrams:")
             for word_data in pangrams:
+                status = "✓" if word_data['in_bee'] else "×"
                 print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
         
         print("\nAll valid words (sorted alphabetically):")
         for word_data in valid_words:
+            status = "✓" if word_data['in_bee'] else "×"
             print(f"{status} {word_data['word']} ({word_data['bee_count']} times) - {word_data['points']} points")
             
     except FileNotFoundError as e:
