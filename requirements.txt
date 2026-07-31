@@ -5,4 +5,5 @@ gunicorn==21.2.0
 requests==2.31.0
 werkzeug==3.0.1
 english-words==2.0.1
+duckdb==1.5.5
 

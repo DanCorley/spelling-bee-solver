@@ -116,10 +116,10 @@ def process_spelling_bee_request(mandatory, allowed, all_words, request_id, sour
                 len(pangrams),
                 extra=extra
             )
-        except FileNotFoundError as e:
+        except Exception as e:
             error = str(e)
             logger.error(
-                "File error - IP: %s, Error: %s",
+                "Solver error - IP: %s, Error: %s",
                 request.remote_addr,
                 str(e),
                 extra=extra

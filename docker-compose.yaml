@@ -8,7 +8,6 @@ services:
     environment:
       - FLASK_APP=src/web/app.py
       - FLASK_ENV=production
-      # Add any additional environment variables here
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/"]
@@ -30,8 +29,7 @@ services:
         max-size: "10m"
         max-file: "3"
     volumes:
-      # Mount files as a volume for easier development
-      - ./data/:/app/data/:ro
       - ./src/:/app/src/
+      - ./data/:/app/data/:ro
       # Mount logs directory for persistence
       # - ./logs:/app/logs
