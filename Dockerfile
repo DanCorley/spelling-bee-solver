@@ -22,8 +22,7 @@ RUN apt-get update && \
 
 # Create a non-root user
 RUN useradd -m appuser && \
-    chown -R appuser:appuser /app && \
-    chmod +x /app/startup.sh
+    chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser

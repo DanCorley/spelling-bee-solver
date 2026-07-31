@@ -42,5 +42,5 @@ Thumbs.db
 logs/
 *.log
 
-# Generated data files (downloaded at container startup)
+# Generated data files (used for local development)
 data/
