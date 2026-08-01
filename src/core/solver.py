@@ -1,25 +1,12 @@
 import duckdb
 import time
-import logging
 import os
 import argparse
 from typing import List, Tuple
 
 _conn: duckdb.DuckDBPyConnection | None = None
 _last_loaded: float = 0.0
-_REFRESH_INTERVAL = int(os.environ.get('DATA_REFRESH_SECONDS', '3600'))
-
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../logs')
-os.makedirs(log_dir, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(os.path.join(log_dir, 'spelling_bee.log')),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+_REFRESH_INTERVAL = int(os.environ.get('DATA_REFRESH_SECONDS', '86400'))
 
 
 def _data_source() -> str:
@@ -41,7 +28,6 @@ def _init_conn() -> duckdb.DuckDBPyConnection:
     if os.environ.get('FLASK_ENV') == 'production':
         conn.execute("INSTALL httpfs;")
     conn.execute(f"CREATE TABLE words AS SELECT * FROM read_parquet('{source}')")
-    logger.info("Data loaded from %s", source)
     return conn
 
 
