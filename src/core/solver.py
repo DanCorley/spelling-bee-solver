@@ -34,6 +34,8 @@ def _init_conn() -> duckdb.DuckDBPyConnection:
 def _get_conn() -> duckdb.DuckDBPyConnection:
     global _conn, _last_loaded
     if _conn is None or (time.time() - _last_loaded) > _REFRESH_INTERVAL:
+        if _conn is not None:
+            _conn.close()
         _conn = _init_conn()
         _last_loaded = time.time()
     return _conn
