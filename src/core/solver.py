@@ -26,7 +26,7 @@ def _init_conn() -> duckdb.DuckDBPyConnection:
     source = _data_source()
     conn = duckdb.connect()
     if os.environ.get('FLASK_ENV') == 'production':
-        conn.execute("INSTALL httpfs;")
+        conn.execute("INSTALL httpfs; LOAD httpfs;")
     conn.execute(f"CREATE TABLE words AS SELECT * FROM read_parquet('{source}')")
     return conn
 
