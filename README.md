@@ -1,3 +1,5 @@
+[![Update Data Files](https://github.com/DanCorley/spelling-bee-solver/actions/workflows/update-data.yml/badge.svg?branch=main&event=schedule)](https://github.com/DanCorley/spelling-bee-solver/actions/workflows/update-data.yml)
+
 # Spelling Bee Solver
 
 A Python-based tool for solving the New York Times Spelling Bee puzzle, available in both a cli tool and a web interface.
