@@ -1,7 +1,6 @@
 import duckdb
 from english_words import get_english_words_set
 from collections import defaultdict
-from pathlib import Path
 
 def load_bee_words(jsonl_file):
     import json
