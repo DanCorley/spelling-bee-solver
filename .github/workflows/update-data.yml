@@ -1,0 +1,42 @@
+name: Update Data Files
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Every Day at 12pm UTC
+  workflow_dispatch:     # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run lexicon scraper
+        run: python src/utils/lexicon.py
+
+      - name: Run word comparison
+        run: python src/utils/comparison.py
+
+      - name: Publish data files to release
+        run: |
+          gh release delete data-latest --yes 2>/dev/null || true
+          gh release create data-latest \
+            --title "Latest Data" \
+            --notes "Auto-updated on $(date -u '+%Y-%m-%d %H:%M UTC')" \
+            --prerelease \
+            data/spelling_bee_words.jsonl \
+            data/word_comparison.parquet
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,7 @@ env:
 
 jobs:
   validate-tag:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Check tag format
         run: |

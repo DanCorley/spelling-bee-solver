@@ -41,3 +41,6 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+# Generated data files (used for local development)
+data/

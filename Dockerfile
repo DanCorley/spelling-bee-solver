@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy other necessary files
 COPY src/core/solver.py ./src/core/
 COPY src/web/ ./src/web/
-COPY data/word_comparison.jsonl ./data/
 
 # Create logs directory
 RUN mkdir -p logs
@@ -36,7 +35,7 @@ ENV FLASK_APP=src/web/app.py
 ENV FLASK_ENV=production
 
 # Add health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=60s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/ || exit 1
 
 # Start gunicorn with 4 worker processes
