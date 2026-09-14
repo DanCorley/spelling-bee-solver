@@ -2,11 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import string
 import json
+import re
 from time import sleep
 from datetime import datetime
 
 def scrape_words_for_letter(letter):
-    url = f"https://sbhinter.com/spelling-bee-lexicon/{letter}"
+    url = f"https://sbsolver.com/lexicon/{letter}"
     print(f"\nScraping words for letter {letter.upper()}...")
     
     # Add a small delay to be respectful to the server
@@ -18,18 +19,19 @@ def scrape_words_for_letter(letter):
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Find all divs with class containing 'stats-box'
-        stats_boxes = soup.find_all('div', class_=lambda x: x and 'stats-box' in x)
-        
-        if stats_boxes:
-            words_with_counts = []
-            for stats_box in stats_boxes:
-                # Find all word cells and their corresponding count cells
-                word_cell = stats_box.find('div', class_='bee-cell-first')
-                count_cell = stats_box.find('div', class_='bee-count-fixed')
-                word = word_cell.text.strip()
-                count = int(count_cell.text.strip())
+        stats_list = list(zip(
+            soup.find_all('div', class_='bee-cell-first'),
+            soup.find_all('div', class_='bee-count-fixed')
+        ))
 
+        if stats_list:
+            words_with_counts = []
+            for stats_box in stats_list:
+                # Find all word cells and their corresponding count cells
+                word_cell = stats_box[0]
+                count_cell = stats_box[1]
+                word = word_cell.text.strip()
+                count = int(re.sub(r'\D', '', count_cell.text.strip()))
                 words_with_counts.append({
                     "word": word,
                     "count": count,
