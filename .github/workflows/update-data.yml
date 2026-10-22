@@ -2,7 +2,7 @@ name: Update Data Files
 
 on:
   schedule:
-    - cron: '0 12 * * *' # Every Day at 12pm UTC
+    - cron: '0 12 * * 1' # Mondays at 12pm UTC
   workflow_dispatch:     # Allow manual trigger
 
 jobs:
