@@ -1,8 +1,8 @@
 name: Update Data Files
 
 on:
-  schedule:
-    - cron: '0 12 * * 1' # Mondays at 12pm UTC
+  # schedule: # disabling as we're receiving 403s
+  #   - cron: '0 12 * * 1' # Mondays at 12pm UTC
   workflow_dispatch:     # Allow manual trigger
 
 jobs:
